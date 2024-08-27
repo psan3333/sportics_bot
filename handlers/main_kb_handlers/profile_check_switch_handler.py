@@ -13,13 +13,14 @@ from database_actions import Database
 router = Router()
 
 
-@router.callback_query(BotMode.CheckProfilesMode, DeleteUserLink.filter(F.action.in_(["delete_user_link"])))
+@router.callback_query(DeleteUserLink.filter(F.action.in_(["delete_user_link"])))
 async def delete_user_link(
     call: CallbackQuery,
     callback_data: DeleteUserLink,
     state: FSMContext,
     bot: Bot
 ):
+    """This callback query can be used to delete any type of message which uses DeleteUserLink callback data"""
     await bot.delete_message(
         chat_id=call.message.chat.id,
         message_id=call.message.message_id

@@ -3,12 +3,13 @@ from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 
 from keyboards.reply import remove_keyboard_kb, sex_filters_kb, main_bot_keyboard
-from keyboards.fabric import user_profile_check_kb
+from keyboards.fabric import user_profile_check_kb, url_btn_markup
 
 from handlers.main_kb_handlers.user_profile_repr import UserProfile
 from bot_data.constants import main_kb_button_names
 from bot_states import BotMode
 from database_actions import Database
+from config_reader import config
 
 router = Router()
 
@@ -57,5 +58,11 @@ async def main_keyboard_handler(message: Message, state: FSMContext, _db: Databa
             reply_markup=main_bot_keyboard()
         )
     elif message.text == main_kb_button_names[3]:
-        # TODO: сделать функцию отправки донатов СЕБЕ))))))) (почему бы и нет)))
-        pass
+        await message.answer(
+            text="Поддержка проекта происходит через сервис CloudTips. Ниже будет ссылка на пожертвования для проекта! Большое вам спасибо!",
+            reply_markup=url_btn_markup(
+                text="Ссылка",
+                url=config.DONATIONS_URL.get_secret_value(),
+                cancel_text="Убрать ссылку"
+            )
+        )
