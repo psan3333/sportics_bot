@@ -15,10 +15,7 @@ class Database:
         self.__fs = aiomongo.AsyncIOMotorGridFSBucket(self.__db.Users)
 
     def get_photo_filename(self, user_data) -> str:
-        # TODO: убрать строку для тестирования
-        # для тестирования программы
-        return f"{user_data['photo']}_{1111101170}.jpg"
-        # return f"{user_data['photo']}_{user_data['user_id']}.jpg" - правильная версия
+        return f"{user_data['photo']}_{user_data['user_id']}.jpg"
 
     async def get_user_by_id(self, user_id, distance_to_user=None):
         user = await self.__db.Users.users.find_one({'user_id': user_id})
