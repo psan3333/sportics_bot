@@ -45,7 +45,6 @@ RUN adduser \
 # RUN echo "mongodb-org-tools hold" | dpkg --set-selections
 # RUN systemctl start mongod
 # RUN systemctl status mongod
-
 # python setup
 RUN apk add --no-cache --update \
     python3 python3-dev gcc \
