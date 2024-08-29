@@ -1,12 +1,13 @@
 import datetime
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 from aiogram.types import KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 
 
-def basic_kb_builder(
+def basic_reply_kb_builder(
     text: str | list,
     rows: list = [],
-    input_field_placeholder: str | None = None
+    input_field_placeholder: str | None = None,
+    inline: bool = False,
 ):
     builder = ReplyKeyboardBuilder()
 
@@ -17,8 +18,12 @@ def basic_kb_builder(
         start_row_index = 0
         for row in rows:
             end_row_index = start_row_index + row
-            builder.row(*[KeyboardButton(text=item)
-                        for item in text[start_row_index:end_row_index]])
+            builder.row(
+                *[
+                    KeyboardButton(text=item)
+                    for item in text[start_row_index:end_row_index]
+                ]
+            )
             start_row_index = end_row_index
     else:
         [builder.button(text=txt) for txt in text]

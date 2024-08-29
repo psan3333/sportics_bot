@@ -1,1 +1,2 @@
-from .check_age import *
+from .check_age import CheckAge
+from .admin_check import IsAdmin

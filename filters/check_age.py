@@ -8,9 +8,13 @@ class CheckAge(BaseFilter):
     async def __call__(self, message: Message):
         user_input = message.text
 
-        if not user_input.isnumeric() or user_input.count('.') > 1 or int(user_input) > MAX_USER_AGE:
+        if (
+            not user_input.isnumeric()
+            or user_input.count(".") > 1
+            or int(user_input) > MAX_USER_AGE
+        ):
             await message.answer(
-                f"Пожалуйста, введите количество полных лет одним числом.\nДопустимый возраст - от {MIN_USER_AGE} до {MAX_USER_AGE} лет.",
+                f"Пожалуйста, введите количество полных лет одним числом.\nДопустимый возраст - от {MIN_USER_AGE} до {MAX_USER_AGE} лет."
             )
             return False
 

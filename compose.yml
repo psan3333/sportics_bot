@@ -16,6 +16,10 @@ services:
       - 8000:8000
     environment:
       - DATABASE_URL=mongodb://db/Users
+    develop:
+      watch:
+        - path: ./
+          action: rebuild
   db:
     image: mongodb/mongodb-community-server:latest
     ports:

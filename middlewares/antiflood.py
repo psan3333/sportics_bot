@@ -13,7 +13,7 @@ class AntiFloodMiddleware(BaseMiddleware):
         self,
         handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
         event: Message,
-        data: Dict[str, Any]
+        data: Dict[str, Any],
     ):
         if event.chat.id in self.limit:
             return
