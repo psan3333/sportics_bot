@@ -1,3 +1,5 @@
+import aiofiles
+
 from aiogram import Router, F, Bot
 from aiogram.types import Message
 from aiogram.filters import Command, CommandStart, StateFilter
@@ -47,40 +49,17 @@ async def start(message: Message, state: FSMContext, _db: Database):
         "🔥Добро пожаловать в Sportics Bot - бот для поиска компании для тренировок и новых знакомств!🔥"
     )
     await message.answer(
-        "Видно, что вы не пользовались данным ботом.\nДавайте тогда зарегестрируем вас, чтобы и вы могли пользоваться ботом, и пользователи могли вас видеть 🔎.\nНажмите 'Продолжить', чтобы начать регистрацию.",
+        "Видно, что вы не пользовались данным ботом.\nДавайте тогда зарегестрируем вас, чтобы и вы могли пользоваться ботом, и пользователи могли вас видеть 🔎.\nПеред тем, как продолжить, прочитайте ползовательское соглашение.\nЕго вы можете увидеть, нажав на /user_agreement",
         reply_markup=create_user_card_kb,
     )
 
 
-@router.message(CommandStart())
-async def start(message: Message, state: FSMContext, _db: Database):
-    # Сделать проверку на регистрация пользователя, чтобы не было коллизиц в базе данных
-    global bot_start_initiated
-    if bot_start_initiated:
-        await message.answer(
-            "Бот уже запущен. Можете продолжать его использование.\nЕсли нужна помощь в использовании бота, напишите или нажмите на /help"
-        )
-        return
-    bot_start_initiated = True
-    check_user = await _db.get_user_by_id(message.from_user.id)
-    if check_user is not None:
-        await state.set_state(BotMode.MainKeyboardMode)
-        await message.answer(
-            f"Здравствуйте, {message.from_user.first_name}!✋\n🔥Рады снова вас приветствовать!🔥\nЕсли нужна помощь в использовании бота, используйте команду /help 🆘",
-            reply_markup=main_bot_keyboard(),
-        )
-        return
-    await state.set_state(BotByStartLaunch.Running)
-    await message.answer(
-        "🔥Добро пожаловать в Sportics Bot - бот для поиска компании для тренировок и новых знакомств!🔥"
-    )
-    await message.answer(
-        "Видно, что вы не пользовались данным ботом.\nДавайте тогда зарегестрируем вас, чтобы и вы могли пользоваться ботом, и пользователи могли вас видеть 🔎.\nПеред тем, как продолжить, прочитайте пользоватлеьское соглашение.",
-    )
+@router.message(Command("user_agreement"))
+async def show_user_agreement(message: Message):
     user_aggrement_file = "./bot_data/on_help_data/user_aggrement.txt"
-    file = open(user_aggrement_file, encoding="utf-8")
-    user_aggrement_text = file.read()
-    await message.answer(user_aggrement_text, reply_markup=create_user_card_kb)
+    async with aiofiles.open(user_aggrement_file, encoding="utf-8") as f:
+        user_aggrement_text = await f.read()
+        await message.answer(user_aggrement_text)
 
 
 @router.message(Command("help"))
