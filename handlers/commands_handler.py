@@ -54,20 +54,28 @@ async def start(message: Message, state: FSMContext, _db: Database):
     )
 
 
+async def print_text_file_into_bot(message: Message, filename: str):
+    async with aiofiles.open(filename, encoding="utf-8") as f:
+        file_text = await f.read()
+        await message.answer(file_text)
+
+
 @router.message(Command("user_agreement"))
 async def show_user_agreement(message: Message):
     user_aggrement_file = "./bot_data/on_help_data/user_aggrement.txt"
-    async with aiofiles.open(user_aggrement_file, encoding="utf-8") as f:
-        user_aggrement_text = await f.read()
-        await message.answer(user_aggrement_text)
+    await print_text_file_into_bot(message, user_aggrement_file)
+
+
+@router.message(Command("about_author"))
+async def show_user_agreement(message: Message):
+    about_author_file = "./bot_data/on_help_data/about_author.txt"
+    await print_text_file_into_bot(message, about_author_file)
 
 
 @router.message(Command("help"))
 async def on_help_handler(message: Message):
     help_message_file = "./bot_data/on_help_data/on_help_text.txt"
-    file = open(help_message_file, encoding="utf-8")
-    help_text = file.read()
-    await message.answer(help_text)
+    await print_text_file_into_bot(message, help_message_file)
 
 
 @router.message(BotMode.MainKeyboardMode, Command("exit"))
