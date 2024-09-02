@@ -2,7 +2,7 @@ import asyncio
 import motor.motor_asyncio as aiomongo
 
 from aiogram import Bot, Dispatcher
-from aiogram.types import BotCommand
+from aiogram.types import BotCommand, Message
 
 from handlers import (
     user_registration,

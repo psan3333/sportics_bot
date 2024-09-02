@@ -16,8 +16,6 @@ class Database:
         self.__fs = aiomongo.AsyncIOMotorGridFSBucket(self.__db.Users)
 
     def get_photo_filename(self, user_data) -> str:
-        # TODO: убрать это после тестирования
-        # return f"{user_data['photo']}_{1111101170}.jpg"
         return f"{user_data['photo']}_{user_data['user_id']}.jpg"
 
     async def get_user_by_id(self, user_id, distance_to_user=None):
@@ -25,6 +23,13 @@ class Database:
         if distance_to_user is not None:
             user["distance_to_user"] = distance_to_user
         return user
+
+    async def add_user_to_blacklist(self, user_id):
+        await self.__db.Users.black_list.insert_one({"user_id": user_id})
+
+    async def check_user_blacklist(self, user_id):
+        user = await self.__db.Users.black_list.find_one({"user_id": user_id})
+        return True if user is not None else False
 
     async def get_user_bot_profile_photo(self, user_id) -> BufferedInputFile:
         user_data = await self.__db.Users.users.find_one({"user_id": user_id})
@@ -37,11 +42,6 @@ class Database:
             photo_contents, filename=self.get_photo_filename(user_data)
         )
         return photo
-
-    async def is_user_banned(self, user_id):
-        # TODO: сделать черный список пользователей
-        user = await self.__db.Users.user_black_list.find_one({"user_id": user_id})
-        return True if user is not None else False
 
     async def sort_users_by_distance(self, current_user, all_users, search_radius):
         distances = []

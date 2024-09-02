@@ -71,3 +71,17 @@ async def switch_user_handler(
         await call.message.answer("Все пользователи проверены")
 
     await call.answer()
+
+
+@router.message()
+async def unknow_command_handler(message: Message, state: FSMContext):
+    await message.answer(
+        "Неизвестная команда.\nЧтобы узнать, как пользоваться ботом, напишите /help"
+    )
+
+
+@router.message()
+async def unknow_command_handler(message: Message):
+    await message.answer(
+        "Неизвестная команда.\nЧтобы узнать, как пользоваться ботом, напишите /help"
+    )
