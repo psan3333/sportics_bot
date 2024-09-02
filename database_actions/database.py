@@ -44,6 +44,10 @@ class Database:
         return photo
 
     async def sort_users_by_distance(self, current_user, all_users, search_radius):
+        if all_users is None:
+            return
+        if len(all_users):
+            return
         distances = []
         current_user_location = (
             current_user["location"]["latitude"],
@@ -64,16 +68,20 @@ class Database:
         all_users = np.array(all_users)
         return all_users[distances_to_return].tolist()
 
-    async def filter_users_by_sex(self, users, sex):
+    async def filter_users_by_sex(self, all_users, sex):
+        if all_users is None:
+            return
+        if len(all_users):
+            return
         if sex == "Неважно":
-            return users
+            return all_users
         else:
             sex = "Парень" if sex == "Парни" else "Девушка"
             filter_func = np.vectorize(
                 lambda user: True if user["sex"] == sex else False
             )
-            users = np.array(users)
-            return users[filter_func(users)].tolist()
+            all_users = np.array(all_users)
+            return all_users[filter_func(all_users)].tolist()
 
     async def get_all_users(self, message: Message):
         if message.from_user.id == int(config.ADMIN_ID.get_secret_value()):

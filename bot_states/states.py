@@ -13,6 +13,7 @@ class UserRegistrationForm(StatesGroup):
     location = State()
     about = State()
     photo = State()
+    create_user = State()
 
 
 class BotByStartLaunch(StatesGroup):

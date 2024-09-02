@@ -129,6 +129,7 @@ async def view_final_user_profile(message: Message, state: FSMContext, photo: st
 @router.message(UserRegistrationForm.photo, F.photo)
 async def set_user_form_photo(message: Message, state: FSMContext):
     photo = message.photo[-1].file_id
+    await state.set_state(UserRegistrationForm.create_user)
     await view_final_user_profile(message, state, photo)
 
 
@@ -137,19 +138,26 @@ async def set_user_form_photo_profile(message: Message, state: FSMContext, bot: 
     user_id = message.from_user.id
     profiles_photos = await bot.get_user_profile_photos(user_id=user_id, limit=1)
     photo = profiles_photos.photos[0][-1].file_id
+    await state.set_state(UserRegistrationForm.create_user)
     await view_final_user_profile(message, state, photo)
 
 
-@router.message(UserRegistrationForm.photo, F.text == "Создать")
+@router.message(UserRegistrationForm.photo, ~F.photo)
+async def wrong_user_form_photo_input(message: Message, state: FSMContext):
+    await message.answer(
+        "Пожалуйста, используйте фотография для вашего профиля",
+        reply_markup=basic_reply_kb_builder("Фото профиля"),
+    )
+
+
+@router.message(UserRegistrationForm.create_user, F.text == "Создать")
 async def upload_to_database_user_form_info(
     message: Message, state: FSMContext, _db: Database, bot: Bot
 ):
     user_data = await state.get_data()
     user_data["user_id"] = message.from_user.id
     user_data["username"] = message.from_user.username
-    user_data["checked_by_admin"] = False
-    result = await _db.insert_user(user_data, bot)
-    # print(result)
+    await _db.insert_user(user_data, bot)
     await state.clear()
     await state.set_state(BotMode.MainKeyboardMode)
     await message.answer(
@@ -161,9 +169,9 @@ async def upload_to_database_user_form_info(
     )
 
 
-@router.message(UserRegistrationForm.photo, ~F.photo)
-async def wrong_user_form_photo_input(message: Message, state: FSMContext):
+@router.message(UserRegistrationForm.create_user, F.text != "Создать")
+async def wrong_on_create_user(message: Message, state: FSMContext):
     await message.answer(
-        "Пожалуйста, используйте фотография для вашего профиля",
-        reply_markup=basic_reply_kb_builder("Фото профиля"),
+        "Пожалуйста, нажмите на кнопку 'Создать' для завершения регистрации.",
+        reply_markup=basic_reply_kb_builder(["Создать"]),
     )
