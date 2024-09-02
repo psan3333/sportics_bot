@@ -14,18 +14,12 @@ from filters import IsAdmin
 router = Router()
 
 
-async def unknown_command_message(message: Message):
-    await message.answer(
-        "Неизвестная команда.\nЧтобы узнать, как пользоваться ботом, напишите /help",
-    )
-
-
 @router.message(CommandStart(), IsAdmin())
-async def start_admin_session(message: Message, state: FSMContext):
+async def start_admin_session(message: Message, state: FSMContext, _num: int):
     await state.set_state(Admin.IsIn)
     await message.answer(
         "Выбрать действие:",
-        reply_markup=basic_reply_kb_builder(["Проверить пользователей", "/exit"]),
+        reply_markup=basic_reply_kb_builder(["Проверить пользователей"]),
     )
 
 
@@ -97,8 +91,3 @@ async def on_delete_profile(message: Message, state: FSMContext, _db: Database):
         await message.answer(
             "Хорошо. Тогда приятного вам пользования!", reply_markup=main_bot_keyboard()
         )
-
-
-@router.message(StateFilter(None))
-async def unknown_command_handler(message: Message):
-    await unknown_command_message(message)
