@@ -14,7 +14,9 @@ class UserProfile:
 
     @staticmethod
     def get_check_profile_string(user_data):
-        return f"{UserProfile.get_profile_string(user_data)}\n\nРасстояние до пользователя - {user_data['distance_to_user']}км."
+        if "distance_to_user" in user_data:
+            return f"{UserProfile.get_profile_string(user_data)}\n\nРасстояние до пользователя - {user_data['distance_to_user']}км."
+        return UserProfile.get_profile_string(user_data)
 
     async def show_user_profile(user_data, **bot_data):
         message: Message = bot_data.get("message")
