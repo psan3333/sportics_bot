@@ -5,9 +5,6 @@ from database_actions import Database
 
 
 class UserProfile:
-    def __init__(self, user_data):
-        self.user_data = user_data
-
     @staticmethod
     def get_profile_string(user_data):
         return f'\n{user_data["name"]}, {user_data["age"]}, {user_data["sex"]}.\n\nО себе:\n{user_data["about"]}'
@@ -18,6 +15,7 @@ class UserProfile:
             return f"{UserProfile.get_profile_string(user_data)}\n\nРасстояние до пользователя - {user_data['distance_to_user']}км."
         return UserProfile.get_profile_string(user_data)
 
+    @staticmethod
     async def show_user_profile(user_data, **bot_data):
         message: Message = bot_data.get("message")
         reply_markup: InlineKeyboardMarkup = bot_data.get("reply_markup")
@@ -35,6 +33,7 @@ class UserProfile:
         )
         return message
 
+    @staticmethod
     async def replace_profile_to_check(user_data, **bot_data):
         message: Message = bot_data.get("message")
         _db: Database = bot_data.get("_db")

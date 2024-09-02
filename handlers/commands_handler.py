@@ -15,7 +15,7 @@ router = Router()
 
 
 @router.message(CommandStart(), IsAdmin())
-async def start_admin_session(message: Message, state: FSMContext, _num: int):
+async def start_admin_session(message: Message, state: FSMContext):
     await state.set_state(Admin.IsIn)
     await message.answer(
         "Выбрать действие:",

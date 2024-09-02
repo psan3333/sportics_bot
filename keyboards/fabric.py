@@ -7,15 +7,20 @@ from pydantic.types import ClassVar
 # TODO: локализовать пользователей для просмотра для каждого отдельного пользователя бота - идея создания контейнера в контексте бота,
 # TODO: который будет получать пользователя через метод контейнера и в нем будет уже менять отдельного пользователя
 class UsersContainer:
-    def __init__(self, users=[]):
-        self.__users = users
+    def __init__(self, users: list = []):
+        self.__users: list = users
 
     def set_users(self, users):
-        self.users = users
+        self.__users = users
 
-    @property
-    def users(self, index):
+    def __len__(self):
+        return len(self.__users)
+
+    def __getitem__(self, index):
         return self.__users[index]
+
+    def pop(self, index):
+        self.__users.pop(index)
 
 
 class UserProfileCheck(CallbackData, prefix="check"):
@@ -27,12 +32,11 @@ class DeleteUserLink(CallbackData, prefix="link"):
     action: str
 
 
-def user_profile_check_kb(users, user_idx=0):
+def user_profile_check_kb(user_idx=0):
     """
     Inline keyboard for bot users' profile checking
     """
     builder = InlineKeyboardBuilder()
-    UsersContainer.users = users
     builder.row(
         InlineKeyboardButton(
             text="◀ Предыдущий",
@@ -88,12 +92,11 @@ def not_bot_kb(user_idx):
     return kb
 
 
-def admin_check(users, user_idx=0):
+def admin_check(user_idx=0):
     """
     Inline keyboard for admin to check users' profiles
     """
     builder = InlineKeyboardBuilder()
-    UsersContainer.users = users
     builder.row(
         InlineKeyboardButton(
             text="◀ Предыдущий",

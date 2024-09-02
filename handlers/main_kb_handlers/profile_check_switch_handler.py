@@ -39,15 +39,14 @@ async def switch_user_handler(
     state: FSMContext,
     _db: Database,
     bot: Bot,
+    _users_to_check: UsersContainer,
 ):
     user_idx = int(callback_data.user_idx)
 
     if callback_data.action == "prev":
         user_idx = user_idx - 1 if user_idx - 1 >= 0 else user_idx
     elif callback_data.action == "next":
-        user_idx = (
-            user_idx + 1 if user_idx + 1 < len(UsersContainer.users) else user_idx
-        )
+        user_idx = user_idx + 1 if user_idx + 1 < len(_users_to_check) else user_idx
     elif callback_data.action == "check":
         await call.message.answer(
             "Подтвердите, что вы не бот!", reply_markup=not_bot_kb(user_idx)
@@ -55,7 +54,7 @@ async def switch_user_handler(
         return
     elif callback_data.action == "not_bot":
         current_user_data = await _db.get_user_by_id(
-            UsersContainer.users[user_idx]["user_id"]
+            _users_to_check[user_idx]["user_id"]
         )
         await bot.delete_message(
             chat_id=call.message.chat.id, message_id=call.message.message_id
@@ -79,17 +78,15 @@ async def switch_user_handler(
         return
 
     current_user_data = await _db.get_user_by_id(
-        UsersContainer.users[user_idx]["user_id"],
-        distance_to_user=UsersContainer.users[user_idx]["distance_to_user"],
+        _users_to_check[user_idx]["user_id"],
+        distance_to_user=_users_to_check[user_idx]["distance_to_user"],
     )
     data = await state.get_data()
     await UserProfile.replace_profile_to_check(
         user_data=current_user_data,
         _db=_db,
         message=data["CheckProfiles"],
-        reply_markup=user_profile_check_kb(
-            users=UsersContainer.users, user_idx=user_idx
-        ),
+        reply_markup=user_profile_check_kb(user_idx=user_idx),
     )
 
     await call.answer()

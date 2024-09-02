@@ -16,6 +16,7 @@ from handlers.main_kb_handlers import (
 )
 from filters import profile_fetching_filters
 from database_actions import Database
+from keyboards.fabric import UsersContainer
 
 from middlewares import AntiFloodMiddleware
 from bot_data.bot_commands_list import BOT_COMMANDS
@@ -50,9 +51,10 @@ async def main():
 
     db_client = aiomongo.AsyncIOMotorClient(config.DATABASE_URL.get_secret_value())
     database = Database(db_client)
+    users_container = UsersContainer()
 
     await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot, _db=database)
+    await dp.start_polling(bot, _db=database, _users_to_check=users_container)
 
 
 if __name__ == "__main__":
