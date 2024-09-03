@@ -1,2 +1,3 @@
-cock*
-.env
+./cock*
+./.env
+./.dockerignore
