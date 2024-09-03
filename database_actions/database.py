@@ -95,8 +95,8 @@ class Database:
                 filter={}, projection=user_data_id_projection
             )
             total_number_of_users = await self.__db.Users.users.count_documents({})
-            users: list = await users_cursor.to_list(total_number_of_users)
-            return users
+            users: list | None = await users_cursor.to_list(total_number_of_users)
+            return users if users is not None else []
         else:
             await message.answer("Функция доступна только администратору!")
             return []
@@ -142,6 +142,8 @@ class Database:
         filtered_by_sex_users = await self.filter_users_by_sex(
             sorted_by_distance_users, sex
         )
+        if filtered_by_sex_users is None:
+            return []
         return filtered_by_sex_users[:FETCH_USERS_NUMBER]
 
     async def insert_user(self, user_data: dict, bot: Bot):
