@@ -31,7 +31,7 @@ async def start_users_filtereing(
     )
     await state.set_state(Admin.FilterUsers)
     profile_message_id = await UserProfile.show_user_profile(
-        user_data, message=message, _db=_db, reply_markup=admin_check()
+        user_data, message=message, _db=_db, reply_markup=admin_check(), admin=True
     )
     await state.update_data(CheckProfiles=profile_message_id)
 
@@ -68,6 +68,7 @@ async def switch_user_handler(
             _db=_db,
             message=data["CheckProfiles"],
             reply_markup=admin_check(user_idx=user_idx),
+            admin=True,
         )
     else:
         await call.message.answer("Все пользователи проверены")

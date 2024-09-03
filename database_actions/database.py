@@ -46,7 +46,7 @@ class Database:
     async def sort_users_by_distance(self, current_user, all_users, search_radius):
         if all_users is None:
             return
-        if len(all_users):
+        if len(all_users) == 0:
             return
         distances = []
         current_user_location = (
@@ -61,6 +61,7 @@ class Database:
             )
             distances.append(haversine(current_user_location, user_location))
             all_users[index]["distance_to_user"] = round(distances[index], 1)
+        print(distances)
         distances = np.array(distances)
         sorted_indexes = np.argsort(distances)
         sorted_distances = np.sort(distances)
@@ -71,7 +72,7 @@ class Database:
     async def filter_users_by_sex(self, all_users, sex):
         if all_users is None:
             return
-        if len(all_users):
+        if len(all_users) == 0:
             return
         if sex == "Неважно":
             return all_users

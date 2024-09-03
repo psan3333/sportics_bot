@@ -27,6 +27,9 @@ class UserProfile:
             if "distance_to_user" in user_data
             else UserProfile.get_profile_string(user_data)
         )
+        admin_string = f"\n{user_data['location']}" if bot_data.get("admin") else ""
+
+        user_profile_string = user_profile_string + admin_string
 
         message = await message.answer_photo(
             user_photo, caption=user_profile_string, reply_markup=reply_markup
@@ -43,6 +46,11 @@ class UserProfile:
 
         await message.edit_media(media=user_photo)
         await message.edit_caption(
-            caption=UserProfile.get_check_profile_string(user_data),
+            caption=(
+                UserProfile.get_check_profile_string(user_data)
+                + f"\n{user_data['location']}"
+                if bot_data.get("admin")
+                else ""
+            ),
             reply_markup=reply_markup,
         )
