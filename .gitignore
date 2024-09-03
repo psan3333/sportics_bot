@@ -1,3 +1,4 @@
-./cock*
-./.env
-./.dockerignore
+cock*
+.env
+.dockerignore
+**/__pycache__/
