@@ -43,14 +43,10 @@ class UserProfile:
         reply_markup: InlineKeyboardMarkup = bot_data.get("reply_markup")
         user_photo_file = await _db.get_user_bot_profile_photo(user_data["user_id"])
         user_photo = InputMediaPhoto(media=user_photo_file)
+        admin_string = f"\n{user_data['location']}" if bot_data.get("admin") else ""
 
         await message.edit_media(media=user_photo)
         await message.edit_caption(
-            caption=(
-                UserProfile.get_check_profile_string(user_data)
-                + f"\n{user_data['location']}"
-                if bot_data.get("admin")
-                else ""
-            ),
+            caption=(UserProfile.get_check_profile_string(user_data) + admin_string),
             reply_markup=reply_markup,
         )
