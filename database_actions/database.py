@@ -61,7 +61,6 @@ class Database:
             )
             distances.append(haversine(current_user_location, user_location))
             all_users[index]["distance_to_user"] = round(distances[index], 1)
-        print(distances)
         distances = np.array(distances)
         sorted_indexes = np.argsort(distances)
         sorted_distances = np.sort(distances)
