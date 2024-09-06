@@ -33,6 +33,7 @@ class BotMode(StatesGroup):
     CheckProfilesMode = State()
     DeleteProfileState = State()
     profiles_search_filters = State()
+    _users_to_check = State()
 
 
 class Admin(StatesGroup):
@@ -42,3 +43,4 @@ class Admin(StatesGroup):
 
     IsIn = State()
     FilterUsers = State()
+    _users_to_check = State()

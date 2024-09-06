@@ -6,16 +6,14 @@ from bot_states import Admin
 from database_actions import Database
 from filters import IsAdmin
 from keyboards.reply import remove_keyboard_kb
-from keyboards.fabric import admin_check, UserProfileCheck, UsersContainer
+from keyboards.fabric import admin_check, UserProfileCheck
 from handlers.main_kb_handlers.user_profile_repr import UserProfile
 
 router = Router()
 
 
 @router.message(Admin.IsIn, F.text == "Проверить пользователей")
-async def start_users_filtereing(
-    message: Message, state: FSMContext, _db: Database, _users_to_check: UsersContainer
-):
+async def start_users_filtereing(message: Message, state: FSMContext, _db: Database):
     await state.update_data(IsIn="Admin")
     users_to_check = await _db.get_all_users(message=message)
     if len(users_to_check) == 0:
@@ -23,7 +21,7 @@ async def start_users_filtereing(
             "С данными фильтрами не нашлось ни одного пользователя(\nПопробуйте изменить свои параметры поиска."
         )
         return
-    _users_to_check.set_users(users_to_check)
+    await state.update_data(_users_to_check=users_to_check)
     user_data = await _db.get_user_by_id(users_to_check[0]["user_id"])
     await message.answer(
         "Вы выбрали просмотр других пользователей бота.",
@@ -45,10 +43,10 @@ async def switch_user_handler(
     callback_data: UserProfileCheck,
     state: FSMContext,
     _db: Database,
-    bot: Bot,
-    _users_to_check: UsersContainer,
 ):
     user_idx = int(callback_data.user_idx)
+    state_data = await state.get_data()
+    _users_to_check: list = state_data["_users_to_check"]
 
     if callback_data.action == "prev":
         user_idx = user_idx - 1 if user_idx - 1 >= 0 else user_idx
@@ -57,6 +55,7 @@ async def switch_user_handler(
     elif callback_data.action == "delete_user":
         await _db.delete_user(_users_to_check[user_idx]["user_id"])
         _users_to_check.pop(user_idx)
+        await state.update_data(_users_to_check=_users_to_check)
 
     if len(_users_to_check) > 0:
         current_user_data = await _db.get_user_by_id(

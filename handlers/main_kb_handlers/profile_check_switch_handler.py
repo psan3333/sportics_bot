@@ -7,7 +7,6 @@ from handlers.main_kb_handlers.user_profile_repr import UserProfile
 from keyboards.fabric import (
     UserProfileCheck,
     DeleteUserLink,
-    UsersContainer,
     user_profile_check_kb,
 )
 from keyboards.reply import main_bot_keyboard
@@ -39,9 +38,10 @@ async def switch_user_handler(
     state: FSMContext,
     _db: Database,
     bot: Bot,
-    _users_to_check: UsersContainer,
 ):
     user_idx = int(callback_data.user_idx)
+    state_data = await state.get_data()
+    _users_to_check = state_data["_users_to_check"]
 
     if callback_data.action == "prev":
         user_idx = user_idx - 1 if user_idx - 1 >= 0 else user_idx

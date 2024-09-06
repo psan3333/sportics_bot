@@ -25,7 +25,6 @@ async def start_admin_session(message: Message, state: FSMContext):
 
 @router.message(CommandStart())
 async def start(message: Message, state: FSMContext, _db: Database):
-    # Сделать проверку на регистрация пользователя, чтобы не было коллизиц в базе данных
     check_user = await _db.get_user_by_id(message.from_user.id)
     if check_user is not None:
         await state.set_state(BotMode.MainKeyboardMode)

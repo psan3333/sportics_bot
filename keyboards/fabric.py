@@ -4,25 +4,6 @@ from aiogram.filters.callback_data import CallbackData
 from pydantic.types import ClassVar
 
 
-# TODO: локализовать пользователей для просмотра для каждого отдельного пользователя бота - идея создания контейнера в контексте бота,
-# TODO: который будет получать пользователя через метод контейнера и в нем будет уже менять отдельного пользователя
-class UsersContainer:
-    def __init__(self, users: list = []):
-        self.__users: list = users
-
-    def set_users(self, users):
-        self.__users = users
-
-    def __len__(self):
-        return len(self.__users)
-
-    def __getitem__(self, index):
-        return self.__users[index]
-
-    def pop(self, index):
-        self.__users.pop(index)
-
-
 class UserProfileCheck(CallbackData, prefix="check"):
     action: str
     user_idx: int

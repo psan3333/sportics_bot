@@ -3,7 +3,7 @@ from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 
 from keyboards.reply import remove_keyboard_kb, sex_filters_kb, main_bot_keyboard
-from keyboards.fabric import user_profile_check_kb, url_btn_markup, UsersContainer
+from keyboards.fabric import user_profile_check_kb, url_btn_markup
 
 from handlers.main_kb_handlers.user_profile_repr import UserProfile
 from bot_data.constants import main_kb_button_names
@@ -15,9 +15,7 @@ router = Router()
 
 
 @router.message(BotMode.MainKeyboardMode, F.text.in_(main_kb_button_names))
-async def main_keyboard_handler(
-    message: Message, state: FSMContext, _db: Database, _users_to_check: UsersContainer
-):
+async def main_keyboard_handler(message: Message, state: FSMContext, _db: Database):
     if message.text == main_kb_button_names[0]:
         users_to_check = await _db.get_closest_users(
             user_id=message.from_user.id, bot_state=state
@@ -27,7 +25,7 @@ async def main_keyboard_handler(
                 "С данными фильтрами не нашлось ни одного пользователя(\nПопробуйте изменить свои параметры поиска."
             )
             return
-        _users_to_check.set_users(users_to_check)
+        await state.update_data(_users_to_check=users_to_check)
         await state.set_state(BotMode.CheckProfilesMode)
         user_data = await _db.get_user_by_id(
             users_to_check[0]["user_id"], users_to_check[0]["distance_to_user"]
